@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Venue {
+  id          Int      @id @default(autoincrement())
+  name        String
+  sport       String
+  location    String
+  rating      Float
+  price       Int
+  occupancy   Int
+  capacity    Int
+  description String?
+  imageUrl    String?
+
+  // Comma-separated tags, e.g. "Indoor,Floodlights,AC"
+  features    String?
+  // Comma-separated tags, e.g. "Locker Rooms,Parking,Wi-Fi"
+  facilities  String?
+
+  latitude    Float
+  longitude   Float
+
+  slots       Slot[]
+
+  createdAt   DateTime @default(now())
+}
+
+model Slot {
+  id        Int      @id @default(autoincrement())
+  time      String
+  price     Int
+  isActive  Boolean  @default(true)
+
+  venue     Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  venueId   Int
+
+  createdAt DateTime @default(now())
+}
+
+model Booking {
+  id          Int      @id @default(autoincrement())
+  venueName   String
+  slot        String
+  bookingId   String   @unique
+  price       Int
+  playerCount Int      @default(1)
+  createdAt   DateTime @default(now())
+}
+
+model Favorite {
+  id      Int @id @default(autoincrement())
+
+  venueId Int
+}
